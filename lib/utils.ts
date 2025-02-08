@@ -27,7 +27,7 @@ export function generateThumbnailAsUri(url:string, width = 150, height = 150) {
 
   // Handle image loading
   img.onload = () => {
-    ctx.drawImage(img, 0, 0, width, height);
+    ctx?.drawImage(img, 0, 0, width, height);
 
     // Convert the canvas to a Base64 image URI
     const dataUri = canvas.toDataURL("image/png");

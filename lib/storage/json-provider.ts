@@ -110,9 +110,9 @@ export class JsonStorageProvider implements StorageProvider {
     await writeJsonFile(CATEGORIES_FILE, filtered);
   }
 
-  async getDepartments() {
+  async getDepartments(): Promise<string[]> {
     const pcs = await this.getPCs();
-    return [...new Set(pcs.map((pc: any) => pc.department))].sort();
+    return Array.from(new Set(pcs.map((pc: any) => pc.department as string))) as string[];
   }
 
   async updateDepartment(oldName: string, newName: string) {

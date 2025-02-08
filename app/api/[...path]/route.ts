@@ -23,7 +23,7 @@ export async function GET(request: NextRequest, { params }: { params: { path: st
       case 'todos':
         return NextResponse.json(await provider.getTodos());
       case 'categories':
-        const type = searchParams.get('type');
+        const type = searchParams.get('type') as any;
         return NextResponse.json(await provider.getCategories(type));
       case 'departments':
         return NextResponse.json(await provider.getDepartments());

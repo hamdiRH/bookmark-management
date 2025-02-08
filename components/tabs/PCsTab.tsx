@@ -36,7 +36,7 @@ export function PCsTab() {
     setError(null);
     try {
       await Promise.all([fetchPCs(), fetchDepartments()]);
-    } catch (err) {
+    } catch (err:any) {
       setError(err);
       toast({
         title: "Error",
@@ -62,13 +62,13 @@ export function PCsTab() {
     setDepartments(data);
   };
 
-  const handlePCSubmit = async (e) => {
+  const handlePCSubmit = async (e:any) => {
     e.preventDefault();
     setIsPCDialogOpen(false);
     await fetchPCs();
   };
 
-  const handleDepartmentSubmit = async (e) => {
+  const handleDepartmentSubmit = async (e:any) => {
     e.preventDefault();
 
     try {
@@ -108,14 +108,14 @@ export function PCsTab() {
     }
   };
 
-  const openEditDepartment = (department) => {
+  const openEditDepartment = (department:any) => {
     setSelectedDepartment(department);
     setDepartmentName(department);
     setIsEditing(true);
     setIsDepartmentDialogOpen(true);
   };
 
-  const openDeleteDepartment = (department) => {
+  const openDeleteDepartment = (department:any) => {
     setSelectedDepartment(department);
     setIsDeleteDialogOpen(true);
   };
@@ -263,7 +263,7 @@ export function PCsTab() {
         />
         :
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {pcs.map((pc) => (
+          {pcs.map((pc:any) => (
             <Card key={pc._id}>
               <CardHeader>
                 <CardTitle className="flex items-center">

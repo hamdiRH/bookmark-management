@@ -14,8 +14,6 @@ import { ErrorCard } from "@/components/ui/error-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { useNetworkStatus } from "@/hooks/use-network-status";
 import { useToast } from "@/hooks/use-toast";
-import { generateThumbnailAsUri } from "@/lib/utils";
-import getSiteImage from "@/lib/generatelogo";
 
 export function LinksTab() {
   const [links, setLinks] = useState([]);
@@ -23,7 +21,8 @@ export function LinksTab() {
   const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null) as any;
+  const [selectedLink, setSelectedLink] = useState(null) as any;
   const [categoryName, setCategoryName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState(null);
@@ -57,7 +56,7 @@ export function LinksTab() {
     setError(null);
     try {
       await Promise.all([fetchLinks(), fetchCategories()]);
-    } catch (err) {
+    } catch (err: any) {
       setError(err);
       toast({
         title: "Error",
@@ -83,7 +82,7 @@ export function LinksTab() {
     setCategories(data);
   };
 
-  const handleLinkSubmit = async (e) => {
+  const handleLinkSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLinkDialogOpen(false);
     const thumbnail = getFavicon(newLink.url);
@@ -96,7 +95,7 @@ export function LinksTab() {
   };
 
 
-  const handleCategorySubmit = async (e) => {
+  const handleCategorySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -133,11 +132,11 @@ export function LinksTab() {
 
   const handleDeleteCategory = async () => {
     try {
-      await fetch(`/api/categories?id=${selectedCategory._id}`, {
+      await fetch(`/api/links?id=${selectedLink?._id}`, {
         method: 'DELETE'
       });
       setIsDeleteDialogOpen(false);
-      setSelectedCategory(null);
+      setSelectedLink(null);
       await fetchCategories();
       await fetchLinks();
     } catch (error) {
@@ -145,14 +144,25 @@ export function LinksTab() {
     }
   };
 
-  const openEditCategory = (category) => {
+  const handleDeleteLink = async (linkId:string) => {
+    try {
+      await fetch(`/api/links?id=${linkId}`, {
+        method: 'DELETE'
+      });
+      await fetchLinks();
+    } catch (error) {
+      console.error('Error deleting link:', error);
+    }
+  };
+
+  const openEditCategory = (category:any) => {
     setSelectedCategory(category);
     setCategoryName(category.name);
     setIsEditing(true);
     setIsCategoryDialogOpen(true);
   };
 
-  const openDeleteCategory = (category) => {
+  const openDeleteCategory = (category:any) => {
     setSelectedCategory(category);
     setIsDeleteDialogOpen(true);
   };
@@ -217,7 +227,7 @@ export function LinksTab() {
                 <div className="mt-4">
                   <h3 className="text-sm font-medium mb-2">Existing Categories</h3>
                   <div className="space-y-2">
-                    {categories.map((category) => (
+                    {categories.map((category:any) => (
                       <div key={category._id} className="flex items-center justify-between p-2 bg-secondary rounded-md">
                         <span>{category.name}</span>
                         <div className="flex gap-2">
@@ -279,7 +289,7 @@ export function LinksTab() {
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map((category) => (
+                      {categories.map((category:any) => (
                         <SelectItem key={category._id} value={category._id}>
                           {category.name}
                         </SelectItem>
@@ -322,19 +332,18 @@ export function LinksTab() {
 
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {links.map((link) => (
+            {links.map((link:any) => (
               <Card key={link._id}>
                 <CardHeader className="flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
-
-                  <img
-                    src={link.thumbnail}
-                    alt={link.name}
-                    className="w-10 h-10 rounded-full"
-                  />
-                  <CardTitle>{link.name}</CardTitle>
+                    <img
+                      src={link.thumbnail}
+                      alt={link.name}
+                      className="w-10 h-10 rounded-full"
+                    />
+                    <CardTitle>{link.name}</CardTitle>
                   </div>
-                   <Edit className="h-4 w-4" />
+                  <Edit className="h-4 w-4" onClick={() => handleDeleteLink(link._id)}/>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-2">{link.description}</p>

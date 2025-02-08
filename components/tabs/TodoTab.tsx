@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 export function TodoTab() {
   const [todos, setTodos] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const isOnline = useNetworkStatus();
   const { toast } = useToast();
@@ -32,7 +32,7 @@ export function TodoTab() {
     try {
       await fetchTodos();
     } catch (err) {
-      setError(err);
+      setError(err as Error);
       toast({
         title: "Error",
         description: "Failed to load todos. Please try again.",
@@ -50,13 +50,13 @@ export function TodoTab() {
     setTodos(data);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsOpen(false);
     await fetchTodos();
   };
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = (status:string) => {
     switch (status) {
       case 'completed':
         return <CheckCircle2 className="h-5 w-5 text-green-500" />;
@@ -67,7 +67,7 @@ export function TodoTab() {
     }
   };
 
-  const getPriorityColor = (priority) => {
+  const getPriorityColor = (priority:string) => {
     switch (priority) {
       case 'high':
         return 'bg-red-100 text-red-800';
@@ -161,7 +161,7 @@ export function TodoTab() {
           :
 
           <div className="space-y-4">
-            {todos.map((todo) => (
+            {todos.map((todo:any) => (
               <Card key={todo._id}>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
