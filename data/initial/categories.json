@@ -1,0 +1,22 @@
+{
+  "categories": [
+    {
+      "_id": "1",
+      "name": "Development",
+      "type": "link",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "_id": "2",
+      "name": "Design",
+      "type": "link",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "_id": "3",
+      "name": "Productivity",
+      "type": "link",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}

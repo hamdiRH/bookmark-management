@@ -1,0 +1,22 @@
+{
+  "pcs": [
+    {
+      "_id": "1",
+      "name": "DEV-001",
+      "department": "Development",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "_id": "2",
+      "name": "DES-001",
+      "department": "Design",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "_id": "3",
+      "name": "HR-001",
+      "department": "Human Resources",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "links": [
+    {
+      "_id": "1",
+      "name": "GitHub",
+      "url": "https://github.com",
+      "description": "Where the world builds software",
+      "category": "1",
+      "thumbnail": "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "_id": "2",
+      "name": "Figma",
+      "url": "https://figma.com",
+      "description": "The collaborative interface design tool",
+      "category": "2",
+      "thumbnail": "https://images.unsplash.com/photo-1618788372246-79faff0c3742",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "_id": "3",
+      "name": "Notion",
+      "url": "https://notion.so",
+      "description": "All-in-one workspace",
+      "category": "3",
+      "thumbnail": "https://images.unsplash.com/photo-1622675363311-3e1904dc1885",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}
