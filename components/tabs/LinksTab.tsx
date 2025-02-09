@@ -20,15 +20,19 @@ export function LinksTab() {
   const [categories, setCategories] = useState([]);
   const [isLinkDialogOpen, setIsLinkDialogOpen] = useState(false);
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
+
+  const [isUpdateLinkDialogOpen, setIsUpdateLinkDialogOpen] = useState(false);
+
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null) as any;
   const [selectedLink, setSelectedLink] = useState(null) as any;
   const [categoryName, setCategoryName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleteLinkDialogOpen, setIsDeleteLinkDialogOpen] = useState(false);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const isOnline = useNetworkStatus();
-  const [newLink, setNewLink] = useState({ name: '', url: '', category: '', description: '', thumbnail: "" });
+  const [newLink, setNewLink] = useState({ name: '', url: '', category: '', description: '', thumbnail: "" }) as any;
   const { toast } = useToast();
 
   useEffect(() => {
@@ -125,6 +129,7 @@ export function LinksTab() {
       setIsEditing(false);
       setSelectedCategory(null);
       await fetchCategories();
+      await fetchLinks();
     } catch (error) {
       console.error('Error saving category:', error);
     }
@@ -144,9 +149,9 @@ export function LinksTab() {
     }
   };
 
-  const handleDeleteLink = async (linkId:string) => {
+  const handleDeleteLink = async () => {
     try {
-      await fetch(`/api/links?id=${linkId}`, {
+      await fetch(`/api/links?id=${selectedLink?._id}`, {
         method: 'DELETE'
       });
       await fetchLinks();
@@ -155,17 +160,40 @@ export function LinksTab() {
     }
   };
 
-  const openEditCategory = (category:any) => {
+  const handleUpdateLink = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsUpdateLinkDialogOpen(false);
+    const thumbnail = getFavicon(newLink.url);
+    await fetch('/api/links?id=${newLink?._id}', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...newLink, thumbnail })
+    });
+    await fetchLinks();
+  }
+
+  const openEditCategory = (category: any) => {
     setSelectedCategory(category);
     setCategoryName(category.name);
     setIsEditing(true);
     setIsCategoryDialogOpen(true);
   };
 
-  const openDeleteCategory = (category:any) => {
+  const openDeleteCategory = (category: any) => {
     setSelectedCategory(category);
     setIsDeleteDialogOpen(true);
   };
+
+  const openDeleteLinkDialog = (link: any) => {
+    setSelectedLink(link);
+    setIsDeleteLinkDialogOpen(true);
+  };
+
+  const openEditLinkDialog = (link: any) => {
+    setSelectedLink(link);
+    setNewLink(link);
+    setIsUpdateLinkDialogOpen(true);
+  }
 
   if (!isOnline) {
     return (
@@ -227,7 +255,7 @@ export function LinksTab() {
                 <div className="mt-4">
                   <h3 className="text-sm font-medium mb-2">Existing Categories</h3>
                   <div className="space-y-2">
-                    {categories.map((category:any) => (
+                    {categories.map((category: any) => (
                       <div key={category._id} className="flex items-center justify-between p-2 bg-secondary rounded-md">
                         <span>{category.name}</span>
                         <div className="flex gap-2">
@@ -289,7 +317,7 @@ export function LinksTab() {
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map((category:any) => (
+                      {categories.map((category: any) => (
                         <SelectItem key={category._id} value={category._id}>
                           {category.name}
                         </SelectItem>
@@ -319,6 +347,26 @@ export function LinksTab() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AlertDialog open={isDeleteLinkDialogOpen} onOpenChange={setIsDeleteLinkDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete this link.
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteLink}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+
+
+
       {
         links.length === 0 ?
           <EmptyState
@@ -332,7 +380,7 @@ export function LinksTab() {
 
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {links.map((link:any) => (
+            {links.map((link: any) => (
               <Card key={link._id}>
                 <CardHeader className="flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
@@ -343,7 +391,55 @@ export function LinksTab() {
                     />
                     <CardTitle>{link.name}</CardTitle>
                   </div>
-                  <Edit className="h-4 w-4" onClick={() => handleDeleteLink(link._id)}/>
+                  <div className="flex items-center gap-4">
+                    <Dialog open={isUpdateLinkDialogOpen} onOpenChange={setIsUpdateLinkDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Edit className="h-4 w-4 cursor-pointer" onClick={() => openEditLinkDialog(link)} />
+
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Update Link</DialogTitle>
+                        </DialogHeader>
+                        <form onSubmit={handleUpdateLink} className="space-y-4">
+                          <div>
+                            <Label htmlFor="name">Name</Label>
+                            <Input id="name" required value={newLink.name} onChange={(e) => setNewLink({ ...newLink, name: e.target.value })} />
+                          </div>
+                          <div>
+                            <Label htmlFor="url">URL</Label>
+                            <Input id="url" type="url" required
+                              value={newLink.url} onChange={(e) => setNewLink({ ...newLink, url: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="description">Description</Label>
+                            <Textarea id="description" required
+                              value={newLink.description} onChange={(e) => setNewLink({ ...newLink, description: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="category">Category</Label>
+                            <Select value={newLink?.category?._id} onValueChange={(value) => setNewLink({ ...newLink, category: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select category" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {categories.map((category: any) => (
+                                  <SelectItem key={category._id} value={category._id}>
+                                    {category.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <Button type="submit" className="w-full">Update Link</Button>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
+                    <Trash className="h-4 w-4 cursor-pointer" onClick={() => openDeleteLinkDialog(link)} />
+                  </div>
+
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-2">{link.description}</p>

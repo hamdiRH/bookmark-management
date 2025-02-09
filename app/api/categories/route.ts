@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import Category from '@/lib/models/Category';
+import Link from '@/lib/models/Link';
 
 export const dynamic = 'force-dynamic';
 
@@ -42,6 +43,7 @@ export async function DELETE(request: NextRequest) {
     await dbConnect();
     const id = request.nextUrl.searchParams.get('id');
     await Category.findByIdAndDelete(id);
+    await Link.deleteMany({ category: id });
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

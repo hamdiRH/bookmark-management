@@ -38,3 +38,15 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    await dbConnect();
+    const data = await request.json();
+    const link = await Link.findByIdAndUpdate(data._id, data, { new: true });
+    return NextResponse.json(link);
+  } catch (error) {
+    console.log('Error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}

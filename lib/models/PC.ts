@@ -6,13 +6,8 @@ const PCSchema = new mongoose.Schema({
     required: true,
   },
   department: {
-    type: String,
-    required: true,
-  },
-  category: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
-    required: true,
+    ref: 'Departement',
   },
   createdAt: {
     type: Date,
