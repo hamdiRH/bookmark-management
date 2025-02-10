@@ -207,7 +207,7 @@ export function PCsTab() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 ">
         <h2 className="text-2xl font-semibold">PC Management</h2>
         <div className="flex gap-2">
           <Dialog open={isDepartmentDialogOpen} onOpenChange={setIsDepartmentDialogOpen}>
